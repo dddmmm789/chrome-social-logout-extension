@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivacyPanic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #logout-instructions {
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+        }
+        button, a {
+            background: #1E90FF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px;
+            text-decoration: none;
+        }
+        a {
+            background: #32CD32;
+        }
+    </style>
+</head>
+<body>
+    <div id="logout-instructions">
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+            <img src="icon128.png" alt="PrivacyPanic Logo" style="width: 40px; height: 40px; margin-right: 10px;">
+            <h1 style="font-size: 24px; margin: 0;">PrivacyPanic</h1>
+        </div>
+        
+        <h2 style="font-size: 20px; margin-bottom: 15px;">Thanks for using PrivacyPanic!</h2>
+        
+        <div id="logout-results">
+            <p>Logging out from your social media accounts...</p>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h3 style="font-size: 18px; margin-bottom: 10px;">X.com - Manual logout required:</h3>
+            <ol style="padding-left: 20px;">
+                <li>Go to X.com</li>
+                <li>Click on the "More" (...) button in the left sidebar</li>
+                <li>Click on "Log out" at the bottom of the menu</li>
+                <li>Confirm the logout if prompted</li>
+            </ol>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="close-extension">Close</button>
+            <a href="https://chrome.google.com/webstore/detail/naiipfbdmgemabgaobbogcbbohnnhoai" target="_blank">Rate Extension</a>
+            <p style="font-size: 12px; margin-top: 20px;">© 2023 GZM Ltd. All rights reserved.</p>
+            <p style="font-size: 12px;">Contact developer: [hidden email]</p>
+        </div>
+    </div>
+    <script src="final.js"></script>
+</body>
+</html>

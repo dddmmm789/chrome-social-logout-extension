@@ -1,43 +1,159 @@
-let logs = [];
+let logoutResults = [];
+const socialNetworks = [
+  {url: "https://www.facebook.com", domains: ["facebook.com"], name: "Facebook"},
+  {url: "https://www.linkedin.com", domains: ["linkedin.com"], name: "LinkedIn"},
+  {url: "https://www.instagram.com", domains: ["instagram.com"], name: "Instagram"},
+  {url: "https://web.whatsapp.com", domains: ["web.whatsapp.com"], name: "WhatsApp"},
+  {url: "https://accounts.google.com", domains: ["google.com", "youtube.com", "gmail.com"], name: "Google"}
+];
 
-function log(...args) {
-  console.log(...args);
-  logs.push(args.map(arg => JSON.stringify(arg)).join(' '));
+function startLogoutProcess() {
+  logoutResults = []; // Reset results
+  socialNetworks.forEach(createOrFocusTab);
+  
+  // Set a timeout for the entire process
+  setTimeout(showFinalPage, 15000); // 15 seconds timeout
 }
 
-function sendLogoutMessage(tabId, url, retries = 3) {
-  chrome.tabs.sendMessage(tabId, { action: "logout" }, (response) => {
-    if (chrome.runtime.lastError) {
-      log("Error sending message to tab:", chrome.runtime.lastError.message);
-      if (retries > 0) {
-        log("Retrying in 1 second...");
-        setTimeout(() => sendLogoutMessage(tabId, url, retries - 1), 1000);
-      }
+function createOrFocusTab(network) {
+  chrome.tabs.query({url: network.domains.map(domain => `*://*.${domain}/*`)}, (tabs) => {
+    if (tabs.length > 0) {
+      chrome.tabs.update(tabs[0].id, {active: true}, (tab) => {
+        setTimeout(() => initiateLogout(tab, network), 2000);
+      });
     } else {
-      log("Message sent successfully to tab:", tabId);
+      chrome.tabs.create({url: network.url, active: false}, (tab) => {
+        chrome.tabs.onUpdated.addListener(function listener(tabId, info) {
+          if (tabId === tab.id && info.status === 'complete') {
+            chrome.tabs.onUpdated.removeListener(listener);
+            setTimeout(() => initiateLogout(tab, network), 2000);
+          }
+        });
+      });
     }
   });
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  log("Message received in background:", request);
-  if (request.action === "triggerLogout") {
-    chrome.tabs.query({}, (tabs) => {
-      log("Number of tabs found:", tabs.length);
-      tabs.forEach((tab) => {
-        log("Tab URL:", tab.url || "undefined");
-        if (tab.url && tab.url.match(/facebook\.com|twitter\.com|instagram\.com|linkedin\.com/)) {
-          log("Sending logout message to tab:", tab.id, tab.url);
-          sendLogoutMessage(tab.id, tab.url);
-        }
-      });
-    });
-  } else if (request.action === "getLogs") {
-    log("Sending logs");
-    sendResponse({logs: logs.join('\n')});
-    logs = []; // Clear logs after sending
-  }
-  return true; // Indicates that the response will be sent asynchronously
-});
+function initiateLogout(tab, network) {
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    function: performLogout,
+    args: [network.name]
+  }, (injectionResults) => {
+    if (chrome.runtime.lastError) {
+      logoutResults.push({ site: network.name, success: false });
+    } else if (injectionResults && injectionResults[0] && injectionResults[0].result) {
+      logoutResults.push({ site: network.name, success: true });
+    } else {
+      logoutResults.push({ site: network.name, success: false });
+    }
+  });
+}
 
-log("Background script loaded");
+function showFinalPage() {
+  chrome.tabs.create({ url: 'https://twitter.com', active: true }, (tab) => {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['final.js']
+    }, () => {
+      chrome.tabs.sendMessage(tab.id, { action: "showResults", results: logoutResults });
+    });
+  });
+}
+
+function performLogout(siteName) {
+  console.log(`Attempting to log out from ${siteName}`);
+  
+  switch(siteName) {
+    case "Facebook":
+      return logoutFacebook();
+    case "LinkedIn":
+      return logoutLinkedIn();
+    case "Instagram":
+      return logoutInstagram();
+    case "WhatsApp":
+      return logoutWhatsApp();
+    case "Google":
+      return logoutGoogle();
+    default:
+      console.warn(`No specific logout method for ${siteName}`);
+      return false;
+  }
+}
+
+function logoutFacebook() {
+  const logoutButton = document.querySelector('div[data-nocookies="true"] a[href*="logout.php"]');
+  if (logoutButton) {
+    logoutButton.click();
+    return true;
+  }
+  return false;
+}
+
+function logoutLinkedIn() {
+  const navButton = document.querySelector('button[aria-label="Open the Me menu"]');
+  if (navButton) {
+    navButton.click();
+    setTimeout(() => {
+      const signOutLink = document.querySelector('a[href*="logout"]');
+      if (signOutLink) {
+        signOutLink.click();
+        return true;
+      }
+    }, 1000);
+  }
+  return false;
+}
+
+function logoutInstagram() {
+  const profileButton = document.querySelector('span[role="link"]:has(img[alt*="profile picture"])');
+  if (profileButton) {
+    profileButton.click();
+    setTimeout(() => {
+      const logoutButton = document.querySelector('button:contains("Log Out")');
+      if (logoutButton) {
+        logoutButton.click();
+        return true;
+      }
+    }, 1000);
+  }
+  return false;
+}
+
+function logoutWhatsApp() {
+  const menuButton = document.querySelector('div[aria-label="Menu"]');
+  if (menuButton) {
+    menuButton.click();
+    setTimeout(() => {
+      const logoutButton = document.querySelector('div[aria-label="Log out"]');
+      if (logoutButton) {
+        logoutButton.click();
+        return true;
+      }
+    }, 1000);
+  }
+  return false;
+}
+
+function logoutGoogle() {
+  const accountButton = document.querySelector('a[aria-label="Google Account"]');
+  if (accountButton) {
+    accountButton.click();
+    setTimeout(() => {
+      const signOutButton = document.querySelector('a[href*="Logout"]');
+      if (signOutButton) {
+        signOutButton.click();
+        return true;
+      }
+    }, 1000);
+  }
+  return false;
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "triggerLogout") {
+    startLogoutProcess();
+    sendResponse({status: "Logout process initiated"});
+  }
+  return true;
+});

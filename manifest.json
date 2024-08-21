@@ -1,32 +1,51 @@
 {
-  "manifest_version": 3,
-  "name": "Social Network Logout",
-  "version": "1.0",
-  "description": "Logs out from all open social network windows",
-  "permissions": [
-    "tabs",
-    "activeTab",
-    "scripting"
-  ],
-  "host_permissions": [
-    "*://*/*"
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "popup.html"
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "*://*.facebook.com/*",
-        "*://*.twitter.com/*",
-        "*://*.instagram.com/*",
-        "*://*.linkedin.com/*"
-      ],
-      "js": ["content.js"],
-      "run_at": "document_idle"
-    }
-  ]
-}
+    "manifest_version": 3,
+    "name": "PrivacyPanic",
+    "version": "1.0",
+    "description": "Quickly log out from multiple social media accounts",
+    "icons": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icon16.png",
+        "32": "icon32.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+      }
+    },
+    "permissions": [
+      "activeTab",
+      "scripting",
+      "tabs"
+    ],
+    "host_permissions": [
+      "*://*.facebook.com/*",
+      "*://*.linkedin.com/*",
+      "*://*.instagram.com/*",
+      "*://*.whatsapp.com/*",
+      "*://*.google.com/*",
+      "*://*.youtube.com/*",
+      "*://*.gmail.com/*",
+      "*://*.twitter.com/*"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["*://*.twitter.com/*"],
+        "js": ["final.js"]
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["icon128.png", "log.html"],
+        "matches": ["<all_urls>"]
+      }
+    ]
+  }
