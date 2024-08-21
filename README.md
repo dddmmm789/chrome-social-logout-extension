@@ -1,0 +1,1 @@
+# chrome-social-logout-extension
