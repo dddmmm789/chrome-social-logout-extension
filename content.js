@@ -4,6 +4,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("Message received in content script:", request);
   if (request.action === "logout") {
     console.log("Attempting logout for:", window.location.hostname);
+    // ... (keep the rest of the existing code)
+console.log("Content script loaded for:", window.location.hostname);
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("Message received in content script:", request);
+  if (request.action === "logout") {
+    console.log("Attempting logout for:", window.location.hostname);
     if (window.location.hostname.includes("facebook.com")) {
       // Facebook logout
       console.log("Attempting Facebook logout");
@@ -30,6 +37,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         document.querySelector('a[href*="logout"]')?.click();
       }, 1000);
     }
+    sendResponse({status: "Logout attempt completed"});
+  }
+  return true; // Indicates that the response will be sent asynchronously
+});
+        // ... (keep the existing code)
     sendResponse({status: "Logout attempt completed"});
   }
   return true; // Indicates that the response will be sent asynchronously
