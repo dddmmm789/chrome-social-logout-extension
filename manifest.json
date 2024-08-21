@@ -1,31 +1,32 @@
 {
-    "manifest_version": 3,
-    "name": "Social Network Logout",
-    "version": "1.0",
-    "description": "Logs out from all open social network windows",
-    "permissions": [
-      "tabs",
-      "activeTab",
-      "scripting"
-    ],
-    "host_permissions": [
-      "*://*/*"
-    ],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "action": {
-      "default_popup": "popup.html"
-    },
-    "content_scripts": [
-      {
-        "matches": [
-          "*://*.facebook.com/*",
-          "*://*.twitter.com/*",
-          "*://*.instagram.com/*",
-          "*://*.linkedin.com/*"
-        ],
-        "js": ["content.js"]
-      }
-    ]
-  }
+  "manifest_version": 3,
+  "name": "Social Network Logout",
+  "version": "1.0",
+  "description": "Logs out from all open social network windows",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.facebook.com/*",
+        "*://*.twitter.com/*",
+        "*://*.instagram.com/*",
+        "*://*.linkedin.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
