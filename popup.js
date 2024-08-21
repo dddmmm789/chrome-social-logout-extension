@@ -8,10 +8,11 @@ document.getElementById('logoutButton').addEventListener('click', () => {
 document.getElementById('getLogs').addEventListener('click', () => {
   chrome.runtime.sendMessage({action: "getLogs"}, (response) => {
     console.log("Logs received:", response);
+    const logsArea = document.getElementById('logsArea');
     if (response && response.logs) {
-      document.getElementById('logsArea').textContent = response.logs;
+      logsArea.textContent = response.logs;
     } else {
-      document.getElementById('logsArea').textContent = "No logs available";
+      logsArea.textContent = "No logs available";
     }
   });
 });
