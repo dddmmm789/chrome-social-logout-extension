@@ -20,7 +20,8 @@
     <ol>
         <li><strong>Clone the Repository</strong>:
             <pre><code>git clone https://github.com/dddmmm789/chrome-social-logout-extension.git
-cd chrome-social-logout-extension</code></pre>
+cd chrome-social-logout-extension
+            </code></pre>
         </li>
         <li><strong>Load the Extension in Chrome</strong>:
             <ul>
